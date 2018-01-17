@@ -4,6 +4,7 @@ using System;
 using Ambition.Core.Processor;
 using System.Collections.Generic;
 using Ambition.Core.Extensions;
+using Ambition.Core.Fetcher;
 
 namespace Ambition.Core.Scheduler
 {
@@ -57,6 +58,16 @@ namespace Ambition.Core.Scheduler
         #endregion Ctor
 
         #region Methods
+
+        public virtual IRequestTask AddDefaultFetchResultProcessor(Action<FetchResult> resultHanler = null)
+        {
+            var defaultFetchResultProcessor = new DefaultFetchResultProcessor();
+            if (resultHanler != null)
+            {
+                defaultFetchResultProcessor.SetResultHandler(resultHanler);
+            }
+            return AddFetchResultProcessor(defaultFetchResultProcessor);
+        }
 
         public virtual IRequestTask AddFetchResultProcessor(IFetchResultProcessor fetchResultProcessor)
         {

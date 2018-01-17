@@ -37,7 +37,7 @@ namespace Ambition.Bitcoin
             }
                 .AddEvent(cryptocompareEvent)
                 .AddCommand("SubAdd", cryptocompareCommand)
-                .AddFetchResultProcessor(new DefaultFetchResultProcessor());
+                .AddDefaultFetchResultProcessor();
 
             //http request
             var gdaxHttpRequest = new HttpRequestTask("https://api.gdax.com/products/btc-usd/stats")
