@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.2.1" />
+    <PackageReference Include="Castle.LoggingFacility" Version="4.1.0" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0.1301-develop" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="SocketIoClientDotNet" Version="1.0.4" />
+  </ItemGroup>
+</Project>
