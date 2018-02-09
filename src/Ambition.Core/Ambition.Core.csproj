@@ -2,13 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.0</Version>
+    <Description>a develop framework named assistant jane!</Description>
+    <Copyright>Copyright © Caskia 2018</Copyright>
+    <PackageLicenseUrl>https://github.com/Caskia/Ambition/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Caskia/Ambition</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Caskia/Ambition</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>aspnetcore;framework;dotnet;c-sharp;util;ioc;logger</PackageTags>
+    <Authors>Caskia</Authors>
+    <Company>Caskia</Company>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.2.1" />
     <PackageReference Include="Castle.LoggingFacility" Version="4.1.0" />
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.0.1301-develop" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="4.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="SocketIoClientDotNet" Version="1.0.4" />
