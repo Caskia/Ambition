@@ -56,7 +56,7 @@ namespace Ambition.Core.Fetcher
 
                     requestTask.LastTryTime = requestTask.NextTryTime;
 
-                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}]", ex);
+                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}]");
                     await FetchAsync(requestTask, cancellationToken);
                 }
             }
