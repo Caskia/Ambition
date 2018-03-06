@@ -52,7 +52,7 @@ namespace Ambition.Core.Fetcher
                     requestTask.NextTryTime = nextTryTime.Value;
 
                     LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}", ex);
-                    await Task.Delay((int)(requestTask.NextTryTime - requestTask.LastTryTime.Value).TotalMilliseconds);
+                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds);
 
                     requestTask.LastTryTime = requestTask.NextTryTime;
 
