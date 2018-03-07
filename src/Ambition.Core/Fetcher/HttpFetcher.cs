@@ -46,6 +46,9 @@ namespace Ambition.Core.Fetcher
 
                     var content = ReadContent(httpResponse, httpRequestTask);
 
+                    //dispose http client resource
+                    httpClient.Dispose();
+
                     onReceived(requestTask, content);
 
                     if (!httpRequestTask.IsCycleRequest)

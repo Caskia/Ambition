@@ -70,10 +70,10 @@ namespace Ambition.Core.Fetcher
             catch (Exception ex)
             {
                 LogHelper.Logger.Error($"receive socket-io[{requestTask.Uri}] data error!", ex);
+
+                client.Close();
                 throw ex;
             }
-
-            return Task.CompletedTask;
         }
     }
 }
