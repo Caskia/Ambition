@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,24 +31,23 @@ namespace Ambition.Core.Fetcher
 
             var httpRequestTask = requestTask as HttpRequestTask;
 
+            var httpClientHandler = new HttpClientHandler();
+            httpClientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls;
+            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            var httpClient = new HttpClient(httpClientHandler);
+
+            HttpRequestMessage httpRequestMessage;
+            HttpResponseMessage httpResponse;
             try
             {
-                HttpClient httpClient;
-                HttpRequestMessage httpRequestMessage;
-                HttpResponseMessage httpResponse;
-
-                while (true)
+                while (true && !cancellationToken.IsCancellationRequested)
                 {
-                    httpClient = new HttpClient();
                     httpRequestMessage = GenerateHttpRequestMessage(httpRequestTask);
-                    httpResponse = await httpClient.SendAsync(httpRequestMessage);
+                    httpResponse = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
 
                     httpResponse.EnsureSuccessStatusCode();
 
                     var content = ReadContent(httpResponse, httpRequestTask);
-
-                    //dispose http client resource
-                    httpClient.Dispose();
 
                     onReceived(requestTask, content);
 
@@ -59,14 +59,20 @@ namespace Ambition.Core.Fetcher
 
                     await Task.Delay(httpRequestTask.CycleRequestTimeSpan);
                 }
+
+                httpClient.Dispose();
             }
             catch (HttpRequestException hre)
             {
+                httpClient.Dispose();
+
                 LogHelper.Logger.Error($"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!", hre);
                 throw hre;
             }
             catch (Exception ex)
             {
+                httpClient.Dispose();
+
                 LogHelper.Logger.Error($"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!", ex);
                 throw ex;
             }

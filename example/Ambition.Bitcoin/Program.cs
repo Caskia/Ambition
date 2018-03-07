@@ -46,7 +46,7 @@ namespace Ambition.Bitcoin
 
             var spider = Core.Spider.Create()
                 .AddPipeline(new ConsolePipeline())
-                .AddTasksAsync(cryptocompareRequest).Result;
+            .AddTasksAsync(cryptocompareRequest).Result;
             //.AddTasksAsync(bitstampRequest, gdaxRequest, bitfinexRequest, geminiRequest, cryptocompareRequest, gdaxHttpRequest).Result;
 
             spider.ThreadNum = 100;

@@ -42,6 +42,14 @@ namespace Ambition.Core.Fetcher
             {
                 await DoFetchAsync(requestTask, OnReceivedContent, cancellationToken);
             }
+            catch (TaskCanceledException ex)
+            {
+                LogHelper.Logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                LogHelper.Logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+            }
             catch (Exception ex)
             {
                 LogHelper.Logger.Error($"uri[{requestTask.Uri.ToString()}] connect error!", ex);

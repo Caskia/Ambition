@@ -14,11 +14,11 @@ namespace Ambition.Core
     {
         #region Properties
 
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private IList<IFetchResultProcessor> _fetchResultProcessors = new List<IFetchResultProcessor>();
         private IList<IPipeline> _pipelines = new List<IPipeline>();
         private IScheduler _scheduler = new InMemoryScheduler();
         private int _threadNum = 1;
-
         public string Identity { get; set; }
 
         public IScheduler Scheduler
@@ -193,7 +193,7 @@ namespace Ambition.Core
 
                     UsingFetcher(request, fetcher =>
                     {
-                        fetcher.FetchAsync(request, CancellationToken.None).Wait();
+                        fetcher.FetchAsync(request, _cancellationTokenSource.Token).Wait();
                     });
                 }
             });
@@ -201,7 +201,18 @@ namespace Ambition.Core
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            if (Status == SpiderStatus.Stopped)
+            {
+                LogHelper.Logger.Warn("Spider is stopped, can not stop again!");
+                return;
+            }
+
+            _cancellationTokenSource.Cancel();
+            Status = SpiderStatus.Stopped;
+
+            Thread.Sleep(2000);
+
+            _cancellationTokenSource.Dispose();
         }
 
         protected void CheckIfRunning()

@@ -56,7 +56,7 @@ namespace Ambition.Core.Fetcher
             //receive message
             try
             {
-                while (client.State == WebSocketState.Open)
+                while (client.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
                 {
                     var buffer = new ArraySegment<byte>(new Byte[1024 * 16]);
                     string serializedMessage = null;
@@ -83,6 +83,8 @@ namespace Ambition.Core.Fetcher
                         onReceived(requestTask, serializedMessage);
                     }
                 }
+
+                client.Dispose();
             }
             catch (Exception ex)
             {

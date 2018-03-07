@@ -62,6 +62,14 @@ namespace Ambition.Core.Fetcher
 
                 while (!isDisconnect)
                 {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        client.Disconnect();
+                        client.Close();
+                        isDisconnect = true;
+                        return Task.CompletedTask;
+                    }
+
                     Thread.Sleep(1000);
                 }
 
