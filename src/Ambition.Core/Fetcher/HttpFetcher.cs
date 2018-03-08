@@ -57,7 +57,7 @@ namespace Ambition.Core.Fetcher
                         break;
                     }
 
-                    await Task.Delay(httpRequestTask.CycleRequestTimeSpan);
+                    await Task.Delay(httpRequestTask.CycleRequestTimeSpan, cancellationToken);
                 }
 
                 httpClient.Dispose();

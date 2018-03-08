@@ -79,6 +79,7 @@ namespace Ambition.Core.Fetcher
             {
                 LogHelper.Logger.Error($"receive socket-io[{requestTask.Uri}] data error!", ex);
 
+                client.Disconnect();
                 client.Close();
                 throw ex;
             }

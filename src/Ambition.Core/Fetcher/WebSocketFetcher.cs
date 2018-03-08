@@ -39,7 +39,7 @@ namespace Ambition.Core.Fetcher
             {
                 try
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, cancellationToken);
                     foreach (var command in webSocketRequestTask.Commands)
                     {
                         var commandJson = JsonConvert.SerializeObject(command.Value);

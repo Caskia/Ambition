@@ -40,6 +40,12 @@ namespace Ambition.Core.Fetcher
 
             try
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    LogHelper.Logger.Info($"cancel fetch resource!");
+                    return;
+                }
+
                 await DoFetchAsync(requestTask, OnReceivedContent, cancellationToken);
             }
             catch (TaskCanceledException ex)
@@ -60,7 +66,7 @@ namespace Ambition.Core.Fetcher
                     requestTask.NextTryTime = nextTryTime.Value;
 
                     LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}", ex);
-                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds);
+                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
 
                     requestTask.LastTryTime = requestTask.NextTryTime;
 
