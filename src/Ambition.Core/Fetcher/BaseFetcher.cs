@@ -60,19 +60,7 @@ namespace Ambition.Core.Fetcher
             {
                 LogHelper.Logger.Error($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
 
-                var nextTryTime = requestTask.CalculateNextTryTime();
-                if (nextTryTime.HasValue)
-                {
-                    requestTask.NextTryTime = nextTryTime.Value;
-
-                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}", ex);
-                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
-
-                    requestTask.LastTryTime = requestTask.NextTryTime;
-
-                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}]");
-                    await FetchAsync(requestTask, cancellationToken);
-                }
+                await NextTryFetchAsync(requestTask, cancellationToken);
             }
         }
 
@@ -93,6 +81,38 @@ namespace Ambition.Core.Fetcher
                 foreach (var processor in fetchResultProcessors)
                 {
                     AddAfterFetchCompleteHandler(processor);
+                }
+            }
+        }
+
+        protected virtual async Task NextTryFetchAsync(IRequestTask requestTask, CancellationToken cancellationToken)
+        {
+            var nextTryTime = requestTask.CalculateNextTryTime();
+            if (nextTryTime.HasValue)
+            {
+                requestTask.NextTryTime = nextTryTime.Value;
+
+                try
+                {
+                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
+                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
+
+                    requestTask.LastTryTime = requestTask.NextTryTime;
+
+                    LogHelper.Logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}]");
+                    await FetchAsync(requestTask, cancellationToken);
+                }
+                catch (TaskCanceledException ex)
+                {
+                    LogHelper.Logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    LogHelper.Logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                }
+                catch (Exception ex)
+                {
+                    LogHelper.Logger.Error($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
                 }
             }
         }
