@@ -34,13 +34,13 @@ namespace Ambition.Core.Fetcher
             try
             {
                 bool isDisconnect = false;
-                client.On("disconnect", message =>
+                client.On(Socket.EVENT_DISCONNECT, message =>
                 {
                     client.Disconnect();
                     isDisconnect = true;
                 });
 
-                client.On("error", message =>
+                client.On(Socket.EVENT_ERROR, message =>
                 {
                     client.Disconnect();
                     isDisconnect = true;
