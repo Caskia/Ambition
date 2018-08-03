@@ -1,10 +1,52 @@
-﻿using Ambition.Core.Pipeline;
+﻿using Ambition.Core.Fetcher;
+using Ambition.Core.Pipeline;
 using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ambition.Bitcoin
 {
+    public class FilePipeline : IPipeline
+    {
+        private List<string> contents = new List<string>();
+        private string filePath = $"{AppDomain.CurrentDomain.BaseDirectory}/contents.txt";
+        private object objLock = new object();
+
+        public FilePipeline()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    WriteTask();
+                    Thread.Sleep(200);
+                }
+            });
+        }
+
+        public Task HandleAsync(FetchResult fetchResult)
+        {
+            lock (objLock)
+            {
+                contents.Add(fetchResult.Content);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private void WriteTask()
+        {
+            lock (objLock)
+            {
+                File.AppendAllLines(filePath, contents);
+            }
+        }
+    }
+
     internal class Program
     {
         private static void Main(string[] args)
@@ -30,7 +72,7 @@ namespace Ambition.Bitcoin
 
             //socket-io request
             var cryptocompareEvent = "m";
-            var cryptocompareCommand = new { subs = new[] { "5~CCCAGG~BTC~USD" } };
+            var cryptocompareCommand = new { subs = new[] { "5~CCCAGG~BTC~USD", "5~CCCAGG~ETH~USD", "5~CCCAGG~EOS~USD", "5~CCCAGG~BCH~USD", "5~CCCAGG~LTC~USD" } };
             var cryptocompareRequest = new SocketIORequestTask("https://streamer.cryptocompare.com/")
             {
                 ResultContentType = Core.ContentType.Html
@@ -45,6 +87,7 @@ namespace Ambition.Bitcoin
                 .AddFetchResultProcessor(new DefaultFetchResultProcessor());
 
             var spider = Core.Spider.Create()
+                .AddPipeline(new FilePipeline())
                 .AddPipeline(new ConsolePipeline())
             .AddTasksAsync(cryptocompareRequest).Result;
             //.AddTasksAsync(bitstampRequest, gdaxRequest, bitfinexRequest, geminiRequest, cryptocompareRequest, gdaxHttpRequest).Result;
