@@ -49,6 +49,11 @@ namespace Ambition.Core.Infrastructure
             get { return Logger.IsEnabledFor(Level.Info); }
         }
 
+        public bool IsTraceEnabled
+        {
+            get { return Logger.IsEnabledFor(Level.Trace); }
+        }
+
         public bool IsWarnEnabled
         {
             get { return Logger.IsEnabledFor(Level.Warn); }
@@ -290,6 +295,62 @@ namespace Ambition.Core.Infrastructure
         public override string ToString()
         {
             return Logger.ToString();
+        }
+
+        public void Trace(string message)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, message, null);
+            }
+        }
+
+        public void Trace(Func<string> messageFactory)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, messageFactory.Invoke(), null);
+            }
+        }
+
+        public void Trace(string message, Exception exception)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, message, exception);
+            }
+        }
+
+        public void TraceFormat(string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), null);
+            }
+        }
+
+        public void TraceFormat(Exception exception, string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, new SystemStringFormat(CultureInfo.InvariantCulture, format, args), exception);
+            }
+        }
+
+        public void TraceFormat(IFormatProvider formatProvider, string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, new SystemStringFormat(formatProvider, format, args), null);
+            }
+        }
+
+        public void TraceFormat(Exception exception, IFormatProvider formatProvider, string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Logger.Log(DeclaringType, Level.Trace, new SystemStringFormat(formatProvider, format, args), exception);
+            }
         }
 
         public void Warn(string message)
