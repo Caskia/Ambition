@@ -14,6 +14,8 @@ namespace Ambition.Core
     {
         #region Properties
 
+        private readonly IServiceProvider _serviceProvider;
+
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private IList<IFetchResultProcessor> _fetchResultProcessors = new List<IFetchResultProcessor>();
         private IList<IPipeline> _pipelines = new List<IPipeline>();
@@ -51,6 +53,11 @@ namespace Ambition.Core
         #endregion Properties
 
         #region Ctor
+
+        public Spider(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
 
         public Spider(string identity, IList<IFetchResultProcessor> fetchResultProcessors, IList<IPipeline> pipelines)
         {
