@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
     <PackageReference Include="SocketIoClientDotNet" Version="1.0.5" />
   </ItemGroup>
 </Project>

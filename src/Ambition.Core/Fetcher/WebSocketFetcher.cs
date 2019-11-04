@@ -1,9 +1,8 @@
 ﻿using Ambition.Core.Infrastructure;
-using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
+using Ambition.Core.Utils;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -12,19 +11,15 @@ using System.Threading.Tasks;
 
 namespace Ambition.Core.Fetcher
 {
-    public class WebSocketFetcher : BaseFetcher
+    public class WebSocketFetcher : IFetcher
     {
-        public WebSocketFetcher() : base(null)
+        public WebSocketFetcher()
         {
         }
 
-        public WebSocketFetcher(IList<IFetchResultProcessor> fetchResultProcessors) : base(fetchResultProcessors)
+        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
         {
-        }
-
-        protected override async Task DoFetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
-        {
-            if (!(requestTask is WebSocketRequestTask))
+            if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(WebSocketRequestTask)))
             {
                 throw new ArgumentException($"{nameof(requestTask)} is not websocket task");
             }

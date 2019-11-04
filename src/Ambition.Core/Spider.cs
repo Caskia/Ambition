@@ -1,7 +1,5 @@
 ﻿using Ambition.Core.Fetcher;
 using Ambition.Core.Infrastructure;
-using Ambition.Core.Pipeline;
-using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
 using System;
 using System.Collections.Generic;
@@ -17,8 +15,6 @@ namespace Ambition.Core
         private readonly IServiceProvider _serviceProvider;
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private IList<IFetchResultProcessor> _fetchResultProcessors = new List<IFetchResultProcessor>();
-        private IList<IPipeline> _pipelines = new List<IPipeline>();
         private IScheduler _scheduler = new InMemoryScheduler();
         private int _threadNum = 1;
         public string Identity { get; set; }
@@ -50,103 +46,40 @@ namespace Ambition.Core
             }
         }
 
+        private IFetchService FetchService => _serviceProvider.GetService(typeof(IFetchService)) as IFetchService;
+
         #endregion Properties
 
         #region Ctor
 
         public Spider(IServiceProvider serviceProvider)
+            : this("default", serviceProvider)
         {
-            _serviceProvider = serviceProvider;
         }
 
-        public Spider(string identity, IList<IFetchResultProcessor> fetchResultProcessors, IList<IPipeline> pipelines)
+        public Spider(string identity, IServiceProvider serviceProvider)
         {
             Identity = identity;
-            AddFetchResultProcessors(fetchResultProcessors);
-            AddPipelines(pipelines);
+            _serviceProvider = serviceProvider;
         }
 
         #endregion Ctor
 
         #region Static Methods
 
-        public static Spider Create()
+        public static Spider Create(IServiceProvider serviceProvider)
         {
-            return Create(null, null);
+            return new Spider(serviceProvider);
         }
 
-        public static Spider Create(IList<IFetchResultProcessor> fetchResultProcessors)
+        public static Spider Create(string identity, IServiceProvider serviceProvider)
         {
-            return Create(fetchResultProcessors, null);
-        }
-
-        public static Spider Create(IList<IFetchResultProcessor> fetchResultProcessors, IList<IPipeline> pipelines)
-        {
-            return Create(Guid.NewGuid().ToString("N"), fetchResultProcessors, pipelines);
-        }
-
-        public static Spider Create(string identity, IList<IFetchResultProcessor> fetchResultProcessors, IList<IPipeline> pipelines)
-        {
-            return new Spider(identity, fetchResultProcessors, pipelines);
+            return new Spider(identity, serviceProvider);
         }
 
         #endregion Static Methods
 
         #region Methods
-
-        public Spider AddFetchResultProcessor(IFetchResultProcessor fetchResultProcessor)
-        {
-            if (fetchResultProcessor != null)
-            {
-                _fetchResultProcessors.Add(fetchResultProcessor);
-            }
-            return this;
-        }
-
-        public Spider AddFetchResultProcessors(IList<IFetchResultProcessor> fetchResultProcessors)
-        {
-            if (fetchResultProcessors != null)
-            {
-                foreach (var fetchResultProcessor in fetchResultProcessors)
-                {
-                    AddFetchResultProcessor(fetchResultProcessor);
-                }
-            }
-            return this;
-        }
-
-        public Spider AddPipeline(IPipeline pipeline)
-        {
-            if (pipeline != null)
-            {
-                _pipelines.Add(pipeline);
-            }
-            return this;
-        }
-
-        public Spider AddPipelines(IList<IPipeline> pipelines)
-        {
-            if (pipelines != null)
-            {
-                foreach (var pipeline in pipelines)
-                {
-                    AddPipeline(pipeline);
-                }
-            }
-            return this;
-        }
-
-        public Spider AddPipelines(params IPipeline[] pipelines)
-        {
-            if (pipelines != null)
-            {
-                foreach (var pipeline in pipelines)
-                {
-                    AddPipeline(pipeline);
-                }
-            }
-            return this;
-        }
 
         public async Task<Spider> AddTaskAsync(IRequestTask requestTask)
         {
@@ -198,10 +131,7 @@ namespace Ambition.Core
                 {
                     var request = await Scheduler.PollAsync();
 
-                    UsingFetcher(request, fetcher =>
-                    {
-                        fetcher.FetchAsync(request, _cancellationTokenSource.Token).Wait();
-                    });
+                    await FetchService.FetchAsync(request, _cancellationTokenSource.Token);
                 }
             });
         }
@@ -228,44 +158,6 @@ namespace Ambition.Core
             {
                 throw new Exception("Spider is running.");
             }
-        }
-
-        protected void UsingFetcher(IRequestTask request, Action<IFetcher> action)
-        {
-            IFetcher fetcher = null;
-
-            if (request is WebSocketRequestTask)
-            {
-                fetcher = new WebSocketFetcher(request.FetchResultProcessors);
-            }
-            else if (request is SocketIORequestTask)
-            {
-                fetcher = new SocketIOFetcher(request.FetchResultProcessors);
-            }
-            else if (request is HttpRequestTask)
-            {
-                fetcher = new HttpFetcher(request.FetchResultProcessors);
-            }
-            else
-            {
-                LogHelper.Logger.Error($"RequestTask[{request.Identity}][{request.GetType().Name}] not support!");
-                return;
-            }
-
-            foreach (var fetchResultProcessor in _fetchResultProcessors)
-            {
-                fetcher.AddAfterFetchCompleteHandler(fetchResultProcessor);
-            }
-
-            foreach (var pipeline in _pipelines)
-            {
-                fetcher.FetchedEventHandler += async (sender, fetchResult) =>
-                {
-                    await pipeline.HandleAsync(fetchResult);
-                };
-            }
-
-            action(fetcher);
         }
 
         #endregion Methods

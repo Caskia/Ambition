@@ -7,10 +7,6 @@ namespace Ambition.Core.Fetcher
 {
     public interface IFetcher
     {
-        event EventHandler<FetchResult> FetchedEventHandler;
-
-        void AddAfterFetchCompleteHandler(IAfterFetchCompleteHandler afterFetchCompleteHandler);
-
-        Task FetchAsync(IRequestTask requestTask, CancellationToken cancellationToken);
+        Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken);
     }
 }

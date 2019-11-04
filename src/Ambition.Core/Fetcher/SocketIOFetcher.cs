@@ -1,28 +1,23 @@
 ﻿using Ambition.Core.Infrastructure;
-using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
+using Ambition.Core.Utils;
 using Newtonsoft.Json.Linq;
 using Quobject.SocketIoClientDotNet.Client;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ambition.Core.Fetcher
 {
-    public class SocketIOFetcher : BaseFetcher
+    public class SocketIOFetcher : IFetcher
     {
-        public SocketIOFetcher() : base(null)
+        public SocketIOFetcher()
         {
         }
 
-        public SocketIOFetcher(IList<IFetchResultProcessor> fetchResultProcessors) : base(fetchResultProcessors)
+        public Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
         {
-        }
-
-        protected override Task DoFetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
-        {
-            if (!(requestTask is SocketIORequestTask))
+            if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(SocketIORequestTask)))
             {
                 throw new ArgumentException($"{nameof(requestTask)} is not socket-io task");
             }

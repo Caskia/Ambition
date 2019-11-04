@@ -13,17 +13,35 @@ namespace Ambition.Core.Fetcher
             _serviceProvider = serviceProvider;
         }
 
-        public Dictionary<Type, Type> ProviderMapper => new Dictionary<Type, Type>()
+        public Dictionary<Type, Type> ProviderMapper { get; } = new Dictionary<Type, Type>()
         {
             { typeof(WebSocketRequestTask), typeof(WebSocketFetcher) },
             { typeof(SocketIORequestTask), typeof(SocketIOFetcher) },
             { typeof(HttpRequestTask), typeof(HttpFetcher) }
         };
 
-        public IFetcher GetTaskFetcher(IRequestTask requestTask)
+        public void AddOrUpdateFetcher(Type requestTaskType, Type fetcherType)
         {
-            var requestTaskType = requestTask.GetType();
+            if (ProviderMapper.ContainsKey(requestTaskType))
+            {
+                ProviderMapper[requestTaskType] = fetcherType;
+            }
+            else
+            {
+                ProviderMapper.Add(requestTaskType, fetcherType);
+            }
+        }
 
+        public void DeleteFetcher(Type requestTaskType)
+        {
+            if (ProviderMapper.ContainsKey(requestTaskType))
+            {
+                ProviderMapper.Remove(requestTaskType);
+            }
+        }
+
+        public IFetcher GetFetcher(Type requestTaskType)
+        {
             if (!ProviderMapper.ContainsKey(requestTaskType))
             {
                 throw new NotSupportedException($"{requestTaskType.Name} not support.");

@@ -1,9 +1,8 @@
 ﻿using Ambition.Core.Extensions;
 using Ambition.Core.Infrastructure;
-using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
+using Ambition.Core.Utils;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Security.Authentication;
@@ -12,19 +11,15 @@ using System.Threading.Tasks;
 
 namespace Ambition.Core.Fetcher
 {
-    public class HttpFetcher : BaseFetcher
+    public class HttpFetcher : IFetcher
     {
-        public HttpFetcher() : base(null)
+        public HttpFetcher()
         {
         }
 
-        public HttpFetcher(IList<IFetchResultProcessor> fetchResultProcessors) : base(fetchResultProcessors)
+        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
         {
-        }
-
-        protected override async Task DoFetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
-        {
-            if (!(requestTask is HttpRequestTask))
+            if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(HttpRequestTask)))
             {
                 throw new ArgumentException($"{nameof(requestTask)} is not http task");
             }
