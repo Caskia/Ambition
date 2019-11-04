@@ -3,7 +3,6 @@ using Ambition.Core;
 using Ambition.Core.Fetcher;
 using Ambition.Core.Pipeline;
 using Ambition.Core.Processor;
-using Ambition.Core.Scheduler;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -38,8 +37,16 @@ namespace Ambition.Bitcoin
         {
             var spider = Spider.Create(_serviceProvider);
 
-            await spider.AddTaskAsync(new CryptoCompareRequestTask());
+            await spider.AddTaskAsync(new GDaxRequestTask());
+            await spider.AddTaskAsync(new BitfinexRequestTask());
+            await spider.AddTaskAsync(new GeminiRequestTask());
+            await spider.AddTaskAsync(new BitstampRequestTask());
 
+            //await spider.AddTaskAsync(new CryptoCompareRequestTask());
+
+            await spider.AddTaskAsync(new GDaxHttpRequestTask());
+
+            spider.ThreadNum = 100;
             spider.Start();
 
             ////websocket request
@@ -152,7 +159,7 @@ namespace Ambition.Bitcoin
             });
 
             //http
-            _fetcherProvider.AddOrUpdateFetcher(typeof(GDaxHttpRequestTask), typeof(WebSocketFetcher));
+            _fetcherProvider.AddOrUpdateFetcher(typeof(GDaxHttpRequestTask), typeof(HttpFetcher));
             _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(GDaxHttpRequestTask), new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)

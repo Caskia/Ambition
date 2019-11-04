@@ -1,4 +1,4 @@
-﻿using Ambition.Core.Configurations;
+﻿using Ambition.Bitcoin.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
@@ -12,7 +12,7 @@ namespace Ambition.Bitcoin
             var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices((hostContext, services) =>
             {
-                services.AddAmbition();
+                services.AddSpider();
                 services.AddHostedService<HostedService>();
             })
             .Build();

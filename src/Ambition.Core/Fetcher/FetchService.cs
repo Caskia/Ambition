@@ -107,7 +107,10 @@ namespace Ambition.Core.Fetcher
             var pipelines = _pipelineProvider.GetPipelines(requestTaskType);
             foreach (var pipeline in pipelines)
             {
-                pipeline.HandleAsync(fetchResult);
+                Task.Factory.StartNew(async () =>
+                {
+                    await pipeline.HandleAsync(fetchResult);
+                });
             }
         }
     }
