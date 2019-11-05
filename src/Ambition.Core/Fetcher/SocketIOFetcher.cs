@@ -1,6 +1,7 @@
 ﻿using Ambition.Core.Infrastructure;
 using Ambition.Core.Scheduler;
 using Ambition.Core.Utils;
+using Castle.Core.Logging;
 using Newtonsoft.Json.Linq;
 using Quobject.SocketIoClientDotNet.Client;
 using System;
@@ -11,8 +12,11 @@ namespace Ambition.Core.Fetcher
 {
     public class SocketIOFetcher : IFetcher
     {
+        private readonly ILogger _logger;
+
         public SocketIOFetcher()
         {
+            _logger = new Log4NetLoggerFactory().Create(nameof(SocketIOFetcher));
         }
 
         public Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
@@ -72,7 +76,7 @@ namespace Ambition.Core.Fetcher
             }
             catch (Exception ex)
             {
-                LogHelper.Logger.Error($"receive socket-io[{requestTask.Uri}] data error!", ex);
+                _logger.Error($"receive socket-io[{requestTask.Uri}] data error!", ex);
 
                 client.Disconnect();
                 client.Close();

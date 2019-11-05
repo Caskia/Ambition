@@ -1,6 +1,7 @@
 ﻿using Ambition.Core.Fetcher;
 using Ambition.Core.Infrastructure;
 using Ambition.Core.Scheduler;
+using Castle.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -12,19 +13,27 @@ namespace Ambition.Core
     {
         #region Properties
 
+        private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private IScheduler _scheduler = new InMemoryScheduler();
+        private IScheduler _scheduler;
         private int _threadNum = 1;
         public string Identity { get; set; }
 
         public IScheduler Scheduler
         {
-            get => _scheduler;
             set
             {
                 _scheduler = value;
+            }
+            get
+            {
+                if (_scheduler == null)
+                {
+                    _scheduler = _serviceProvider.GetService(typeof(InMemoryScheduler)) as IScheduler;
+                }
+
+                return _scheduler;
             }
         }
 
@@ -61,6 +70,8 @@ namespace Ambition.Core
         {
             Identity = identity;
             _serviceProvider = serviceProvider;
+
+            _logger = new Log4NetLoggerFactory().Create(nameof(Spider));
         }
 
         #endregion Ctor
@@ -119,7 +130,7 @@ namespace Ambition.Core
         {
             if (Status == SpiderStatus.Running)
             {
-                LogHelper.Logger.Warn("Spider is running, can not run again!");
+                _logger.Warn("Spider is running, can not run again!");
                 return;
             }
 
@@ -140,7 +151,7 @@ namespace Ambition.Core
         {
             if (Status == SpiderStatus.Stopped)
             {
-                LogHelper.Logger.Warn("Spider is stopped, can not stop again!");
+                _logger.Warn("Spider is stopped, can not stop again!");
                 return;
             }
 

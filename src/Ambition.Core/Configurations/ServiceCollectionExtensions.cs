@@ -1,6 +1,7 @@
 ﻿using Ambition.Core.Fetcher;
 using Ambition.Core.Pipeline;
 using Ambition.Core.Processor;
+using Ambition.Core.Scheduler;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ambition.Core.Configurations
@@ -9,6 +10,8 @@ namespace Ambition.Core.Configurations
     {
         public static IServiceCollection AddAmbition(this IServiceCollection services)
         {
+            services.AddSingleton<InMemoryScheduler>();
+
             services.AddSingleton<IFetchService, FetchService>();
             services.AddSingleton<HttpFetcher>();
             services.AddSingleton<SocketIOFetcher>();
