@@ -1,7 +1,10 @@
 ﻿using Ambition.Core.Fetcher;
 using Ambition.Core.Infrastructure;
+using Ambition.Core.Pipeline;
+using Ambition.Core.Processor;
 using Ambition.Core.Scheduler;
 using Castle.Core.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,7 +33,7 @@ namespace Ambition.Core
             {
                 if (_scheduler == null)
                 {
-                    _scheduler = _serviceProvider.GetService(typeof(InMemoryScheduler)) as IScheduler;
+                    _scheduler = _serviceProvider.GetService<InMemoryScheduler>();
                 }
 
                 return _scheduler;
@@ -55,7 +58,13 @@ namespace Ambition.Core
             }
         }
 
-        private IFetchService FetchService => _serviceProvider.GetService(typeof(IFetchService)) as IFetchService;
+        private IFetcherProvider FetcherProvider => _serviceProvider.GetService<IFetcherProvider>();
+
+        private IFetchResultProcessorProvider FetchResultProcessorProvider => _serviceProvider.GetService<IFetchResultProcessorProvider>();
+
+        private IFetchService FetchService => _serviceProvider.GetService<IFetchService>();
+
+        private IPipelineProvider PipelineProvider => _serviceProvider.GetService<IPipelineProvider>();
 
         #endregion Properties
 
@@ -91,6 +100,54 @@ namespace Ambition.Core
         #endregion Static Methods
 
         #region Methods
+
+        #region Fetcher
+
+        public Spider AddOrUpdateFetcher<TRequestTask>(Type fetcherType) where TRequestTask : IRequestTask
+        {
+            FetcherProvider.AddOrUpdateFetcher<TRequestTask>(fetcherType);
+            return this;
+        }
+
+        public Spider DeleteFetcher<TRequestTask>() where TRequestTask : IRequestTask
+        {
+            FetcherProvider.DeleteFetcher<TRequestTask>();
+            return this;
+        }
+
+        #endregion Fetcher
+
+        #region FetchResultProcessor
+
+        public Spider AddOrUpdateFetchResultProcessors<TRequestTask>(List<Type> processorTypes) where TRequestTask : IRequestTask
+        {
+            FetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<TRequestTask>(processorTypes);
+            return this;
+        }
+
+        public Spider DeleteFetchResultProcessors<TRequestTask>() where TRequestTask : IRequestTask
+        {
+            FetchResultProcessorProvider.DeleteFetchResultProcessors<TRequestTask>();
+            return this;
+        }
+
+        #endregion FetchResultProcessor
+
+        #region Pipeline
+
+        public Spider AddOrUpdatePipelines<TRequestTask>(List<Type> pipelineTypes) where TRequestTask : IRequestTask
+        {
+            PipelineProvider.AddOrUpdatePipelines<TRequestTask>(pipelineTypes);
+            return this;
+        }
+
+        public Spider DeletePipelines<TRequestTask>() where TRequestTask : IRequestTask
+        {
+            PipelineProvider.DeletePipelines<TRequestTask>();
+            return this;
+        }
+
+        #endregion Pipeline
 
         public async Task<Spider> AddTaskAsync(IRequestTask requestTask)
         {
