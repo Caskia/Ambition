@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Ambition.Core\Ambition.Core.csproj" />
+    <ProjectReference Include="..\..\src\Ambition\Ambition.csproj" />
   </ItemGroup>
 
   <ItemGroup>

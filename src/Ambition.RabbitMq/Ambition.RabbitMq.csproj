@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.7</Version>
+    <Description>net spider tool</Description>
+    <Copyright>Copyright © Caskia 2019</Copyright>
+    <PackageLicenseUrl>https://github.com/Caskia/Ambition/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Caskia/Ambition</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Caskia/Ambition</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>netcore;crawler;dotnet;c-sharp;spider;</PackageTags>
+    <Authors>Caskia</Authors>
+    <Company>Caskia</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ambition\Ambition.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="5.5.6" />
+  </ItemGroup>
+</Project>

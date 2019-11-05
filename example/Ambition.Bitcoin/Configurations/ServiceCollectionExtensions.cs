@@ -1,4 +1,4 @@
-﻿using Ambition.Core.Configurations;
+﻿using Ambition.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ambition.Bitcoin.Configurations

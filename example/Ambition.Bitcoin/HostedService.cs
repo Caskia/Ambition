@@ -1,8 +1,8 @@
 ﻿using Ambition.Bitcoin.RequestTasks;
-using Ambition.Core;
-using Ambition.Core.Fetcher;
-using Ambition.Core.Pipeline;
-using Ambition.Core.Processor;
+using Ambition;
+using Ambition.Fetcher;
+using Ambition.Pipeline;
+using Ambition.Processor;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;

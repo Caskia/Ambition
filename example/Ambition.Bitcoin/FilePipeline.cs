@@ -1,5 +1,5 @@
-﻿using Ambition.Core.Fetcher;
-using Ambition.Core.Pipeline;
+﻿using Ambition.Fetcher;
+using Ambition.Pipeline;
 using System;
 using System.Collections.Generic;
 using System.IO;

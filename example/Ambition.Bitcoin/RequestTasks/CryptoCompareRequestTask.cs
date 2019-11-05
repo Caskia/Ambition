@@ -1,4 +1,4 @@
-﻿using Ambition.Core.Scheduler;
+﻿using Ambition.Scheduler;
 using System.Collections.Generic;
 
 namespace Ambition.Bitcoin.RequestTasks
@@ -7,7 +7,7 @@ namespace Ambition.Bitcoin.RequestTasks
     {
         public CryptoCompareRequestTask() : base("https://streamer.cryptocompare.com/")
         {
-            ResultContentType = Core.ContentType.Html;
+            ResultContentType = ContentType.Html;
         }
 
         public override IDictionary<string, dynamic> Commands => new Dictionary<string, dynamic>()

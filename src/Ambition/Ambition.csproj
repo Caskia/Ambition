@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.1.7</Version>
+    <Description>net spider tool</Description>
+    <Copyright>Copyright © Caskia 2019</Copyright>
+    <PackageLicenseUrl>https://github.com/Caskia/Ambition/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Caskia/Ambition</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Caskia/Ambition</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>netcore;crawler;dotnet;c-sharp;spider;</PackageTags>
+    <Authors>Caskia</Authors>
+    <Company>Caskia</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.4.0" />
+    <PackageReference Include="Castle.LoggingFacility" Version="5.0.1" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
+    <PackageReference Include="SocketIoClientDotNet" Version="1.0.5" />
+  </ItemGroup>
+</Project>

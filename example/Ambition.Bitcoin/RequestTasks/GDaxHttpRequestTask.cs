@@ -1,4 +1,4 @@
-﻿using Ambition.Core.Scheduler;
+﻿using Ambition.Scheduler;
 using System;
 
 namespace Ambition.Bitcoin.RequestTasks
