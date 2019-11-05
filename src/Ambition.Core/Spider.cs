@@ -18,7 +18,6 @@ namespace Ambition.Core
 
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private IScheduler _scheduler;
         public string Identity { get; set; }
 
@@ -195,12 +194,9 @@ namespace Ambition.Core
                 return Task.CompletedTask;
             }
 
-            _cancellationTokenSource.Cancel();
             Status = SpiderStatus.Stopped;
 
             Thread.Sleep(2000);
-
-            _cancellationTokenSource.Dispose();
 
             return Task.CompletedTask;
         }
