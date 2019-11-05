@@ -20,23 +20,27 @@ namespace Ambition.Core.Fetcher
             { typeof(HttpRequestTask), typeof(HttpFetcher) }
         };
 
-        public void AddOrUpdateFetcher(Type requestTaskType, Type fetcherType)
+        public void AddOrUpdateFetcher<TRequestTask>(Type fetcherType) where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper[requestTaskType] = fetcherType;
+                ProviderMapper[type] = fetcherType;
             }
             else
             {
-                ProviderMapper.Add(requestTaskType, fetcherType);
+                ProviderMapper.Add(type, fetcherType);
             }
         }
 
-        public void DeleteFetcher(Type requestTaskType)
+        public void DeleteFetcher<TRequestTask>() where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper.Remove(requestTaskType);
+                ProviderMapper.Remove(type);
             }
         }
 

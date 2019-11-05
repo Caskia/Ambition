@@ -2,7 +2,8 @@
 
 namespace Ambition.Core.Processor
 {
-    public interface IFetchResultProcessor : IAfterFetchCompleteHandler
+    public interface IFetchResultProcessor
     {
+        void Process(FetchResult fetchResult);
     }
 }

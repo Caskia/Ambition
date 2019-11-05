@@ -23,23 +23,27 @@ namespace Ambition.Core.Processor
             { typeof(HttpRequestTask), new List<Type>(){ typeof(DefaultFetchResultProcessor) } }
         };
 
-        public void AddOrUpdateFetchResultProcessors(Type requestTaskType, List<Type> processorTypes)
+        public void AddOrUpdateFetchResultProcessors<TRequestTask>(List<Type> processorTypes) where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper[requestTaskType] = processorTypes;
+                ProviderMapper[type] = processorTypes;
             }
             else
             {
-                ProviderMapper.Add(requestTaskType, processorTypes);
+                ProviderMapper.Add(type, processorTypes);
             }
         }
 
-        public void DeleteFetchResultProcessors(Type requestTaskType)
+        public void DeleteFetchResultProcessors<TRequestTask>() where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper.Remove(requestTaskType);
+                ProviderMapper.Remove(type);
             }
         }
 

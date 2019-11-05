@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Ambition.Core.Scheduler;
+using System;
 using System.Collections.Generic;
 
 namespace Ambition.Core.Processor
 {
     public interface IFetchResultProcessorProvider
     {
-        void AddOrUpdateFetchResultProcessors(Type requestTaskType, List<Type> processorTypes);
+        void AddOrUpdateFetchResultProcessors<TRequestTask>(List<Type> processorTypes) where TRequestTask : IRequestTask;
 
-        void DeleteFetchResultProcessors(Type requestTaskType);
+        void DeleteFetchResultProcessors<TRequestTask>() where TRequestTask : IRequestTask;
 
         List<IFetchResultProcessor> GetFetchResultProcessors(Type requestTaskType);
     }

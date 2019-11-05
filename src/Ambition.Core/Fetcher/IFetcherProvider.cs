@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Ambition.Core.Scheduler;
+using System;
 
 namespace Ambition.Core.Fetcher
 {
     public interface IFetcherProvider
     {
-        void AddOrUpdateFetcher(Type requestTaskType, Type fetcherType);
+        void AddOrUpdateFetcher<TRequestTask>(Type fetcherType) where TRequestTask : IRequestTask;
 
-        void DeleteFetcher(Type requestTaskType);
+        void DeleteFetcher<TRequestTask>() where TRequestTask : IRequestTask;
 
         IFetcher GetFetcher(Type requestTaskType);
     }

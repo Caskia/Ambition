@@ -41,9 +41,7 @@ namespace Ambition.Bitcoin
             await spider.AddTaskAsync(new BitfinexRequestTask());
             await spider.AddTaskAsync(new GeminiRequestTask());
             await spider.AddTaskAsync(new BitstampRequestTask());
-
-            //await spider.AddTaskAsync(new CryptoCompareRequestTask());
-
+            await spider.AddTaskAsync(new CryptoCompareRequestTask());
             await spider.AddTaskAsync(new GDaxHttpRequestTask());
 
             spider.ThreadNum = 100;
@@ -102,69 +100,69 @@ namespace Ambition.Bitcoin
         private void Map()
         {
             //websocket
-            _fetcherProvider.AddOrUpdateFetcher(typeof(GDaxRequestTask), typeof(WebSocketFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(GDaxRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<GDaxRequestTask>(typeof(WebSocketFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<GDaxRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(GDaxRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<GDaxRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             });
 
-            _fetcherProvider.AddOrUpdateFetcher(typeof(BitfinexRequestTask), typeof(WebSocketFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(BitfinexRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<BitfinexRequestTask>(typeof(WebSocketFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<BitfinexRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(BitfinexRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<BitfinexRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             });
 
-            _fetcherProvider.AddOrUpdateFetcher(typeof(GeminiRequestTask), typeof(WebSocketFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(GeminiRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<GeminiRequestTask>(typeof(WebSocketFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<GeminiRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(GeminiRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<GeminiRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             });
 
-            _fetcherProvider.AddOrUpdateFetcher(typeof(BitstampRequestTask), typeof(WebSocketFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(BitstampRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<BitstampRequestTask>(typeof(WebSocketFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<BitstampRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(BitstampRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<BitstampRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             });
 
             //socket io
-            _fetcherProvider.AddOrUpdateFetcher(typeof(CryptoCompareRequestTask), typeof(SocketIOFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(CryptoCompareRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<CryptoCompareRequestTask>(typeof(SocketIOFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<CryptoCompareRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(CryptoCompareRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<CryptoCompareRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             });
 
             //http
-            _fetcherProvider.AddOrUpdateFetcher(typeof(GDaxHttpRequestTask), typeof(HttpFetcher));
-            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors(typeof(GDaxHttpRequestTask), new List<Type>()
+            _fetcherProvider.AddOrUpdateFetcher<GDaxHttpRequestTask>(typeof(HttpFetcher));
+            _fetchResultProcessorProvider.AddOrUpdateFetchResultProcessors<GDaxHttpRequestTask>(new List<Type>()
             {
                 typeof(DefaultFetchResultProcessor)
             });
-            _pipelineProvider.AddOrUpdatePipelines(typeof(GDaxHttpRequestTask), new List<Type>()
+            _pipelineProvider.AddOrUpdatePipelines<GDaxHttpRequestTask>(new List<Type>()
             {
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)

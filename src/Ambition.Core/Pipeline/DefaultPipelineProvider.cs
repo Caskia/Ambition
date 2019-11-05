@@ -21,23 +21,27 @@ namespace Ambition.Core.Pipeline
             { typeof(HttpRequestTask), new List<Type>(){ typeof(ConsolePipeline) } }
         };
 
-        public void AddOrUpdatePipelines(Type requestTaskType, List<Type> pipelineTypes)
+        public void AddOrUpdatePipelines<TRequestTask>(List<Type> pipelineTypes) where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper[requestTaskType] = pipelineTypes;
+                ProviderMapper[type] = pipelineTypes;
             }
             else
             {
-                ProviderMapper.Add(requestTaskType, pipelineTypes);
+                ProviderMapper.Add(type, pipelineTypes);
             }
         }
 
-        public void DeletePipelines(Type requestTaskType)
+        public void DeletePipelines<TRequestTask>() where TRequestTask : IRequestTask
         {
-            if (ProviderMapper.ContainsKey(requestTaskType))
+            var type = typeof(TRequestTask);
+
+            if (ProviderMapper.ContainsKey(type))
             {
-                ProviderMapper.Remove(requestTaskType);
+                ProviderMapper.Remove(type);
             }
         }
 
