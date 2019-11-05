@@ -1,13 +1,16 @@
-﻿namespace Ambition.Core
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace Ambition.Core
 {
     public interface ISpider
     {
-        void Continue();
+        Task ContinueAsync();
 
-        void Pause();
+        Task PauseAsync();
 
-        void Start();
+        Task StartAsync(CancellationToken cancellationToken);
 
-        void Stop();
+        Task StopAsync();
     }
 }

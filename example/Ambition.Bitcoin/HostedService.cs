@@ -14,20 +14,20 @@ namespace Ambition.Bitcoin
     public class HostedService : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly Spider _spider;
 
         public HostedService(
             IServiceProvider serviceProvider
             )
         {
             _serviceProvider = serviceProvider;
+            _spider = Spider.Create(_serviceProvider);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var spider = Spider.Create(_serviceProvider);
-
             //websocket
-            spider
+            _spider
             .AddOrUpdateFetcher<GDaxRequestTask>(typeof(WebSocketFetcher))
             .AddOrUpdateFetchResultProcessors<GDaxRequestTask>(new List<Type>()
             {
@@ -91,20 +91,19 @@ namespace Ambition.Bitcoin
                 typeof(ConsolePipeline)
             });
 
-            await spider.AddTaskAsync(new GDaxRequestTask());
-            await spider.AddTaskAsync(new BitfinexRequestTask());
-            await spider.AddTaskAsync(new GeminiRequestTask());
-            await spider.AddTaskAsync(new BitstampRequestTask());
-            await spider.AddTaskAsync(new CryptoCompareRequestTask());
-            await spider.AddTaskAsync(new GDaxHttpRequestTask());
+            await _spider.AddTaskAsync(new GDaxRequestTask());
+            await _spider.AddTaskAsync(new BitfinexRequestTask());
+            await _spider.AddTaskAsync(new GeminiRequestTask());
+            await _spider.AddTaskAsync(new BitstampRequestTask());
+            await _spider.AddTaskAsync(new CryptoCompareRequestTask());
+            await _spider.AddTaskAsync(new GDaxHttpRequestTask());
 
-            spider.ThreadNum = 100;
-            spider.Start();
+            await _spider.StartAsync(cancellationToken);
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            await _spider.StopAsync();
         }
     }
 }

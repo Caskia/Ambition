@@ -113,3 +113,4 @@ src/.vs/config/applicationhost.config
 Logs.txt
 Logs.txt.*
 npm-debug.log.*
+/example/Ambition.Bitcoin/logs

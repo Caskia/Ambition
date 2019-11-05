@@ -20,7 +20,6 @@ namespace Ambition.Core
         private readonly IServiceProvider _serviceProvider;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private IScheduler _scheduler;
-        private int _threadNum = 1;
         public string Identity { get; set; }
 
         public IScheduler Scheduler
@@ -41,22 +40,6 @@ namespace Ambition.Core
         }
 
         public SpiderStatus Status { get; set; } = SpiderStatus.Init;
-
-        public int ThreadNum
-        {
-            get => _threadNum;
-            set
-            {
-                CheckIfRunning();
-
-                if (value <= 0)
-                {
-                    throw new ArgumentException("ThreadNum should be more than one!");
-                }
-
-                _threadNum = value;
-            }
-        }
 
         private IFetcherProvider FetcherProvider => _serviceProvider.GetService<IFetcherProvider>();
 
@@ -173,43 +156,43 @@ namespace Ambition.Core
             return this;
         }
 
-        public void Continue()
+        public Task ContinueAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void Pause()
+        public Task PauseAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void Start()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             if (Status == SpiderStatus.Running)
             {
                 _logger.Warn("Spider is running, can not run again!");
                 return;
             }
-
             Status = SpiderStatus.Running;
 
-            Parallel.For(0, ThreadNum, new ParallelOptions() { MaxDegreeOfParallelism = ThreadNum }, async i =>
+            while (Status == SpiderStatus.Running)
             {
-                while (Status == SpiderStatus.Running)
-                {
-                    var request = await Scheduler.PollAsync();
+                var request = await Scheduler.PollAsync();
 
-                    await FetchService.FetchAsync(request, _cancellationTokenSource.Token);
-                }
-            });
+                await Task.Factory.StartNew(async r =>
+                {
+                    var oRequest = r as IRequestTask;
+                    await FetchService.FetchAsync(oRequest, cancellationToken);
+                }, request);
+            }
         }
 
-        public void Stop()
+        public Task StopAsync()
         {
             if (Status == SpiderStatus.Stopped)
             {
-                _logger.Warn("Spider is stopped, can not stop again!");
-                return;
+                _logger.Warn("Spider stopped, can not stop again!");
+                return Task.CompletedTask;
             }
 
             _cancellationTokenSource.Cancel();
@@ -218,6 +201,8 @@ namespace Ambition.Core
             Thread.Sleep(2000);
 
             _cancellationTokenSource.Dispose();
+
+            return Task.CompletedTask;
         }
 
         protected void CheckIfRunning()
