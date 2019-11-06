@@ -1,10 +1,9 @@
 ﻿using Ambition.Fetcher;
-using Ambition.Infrastructure;
 using Ambition.Pipeline;
 using Ambition.Processor;
 using Ambition.Scheduler;
-using Castle.Core.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -62,7 +61,7 @@ namespace Ambition
             Identity = identity;
             _serviceProvider = serviceProvider;
 
-            _logger = new Log4NetLoggerFactory().Create(nameof(Spider));
+            _logger = _serviceProvider.GetService<ILoggerFactory>().CreateLogger<Spider>();
         }
 
         #endregion Ctor
@@ -169,7 +168,7 @@ namespace Ambition
         {
             if (Status == SpiderStatus.Running)
             {
-                _logger.Warn("Spider is running, can not run again!");
+                _logger.LogWarning("Spider is running, can not run again!");
                 return;
             }
             Status = SpiderStatus.Running;
@@ -190,7 +189,7 @@ namespace Ambition
         {
             if (Status == SpiderStatus.Stopped)
             {
-                _logger.Warn("Spider stopped, can not stop again!");
+                _logger.LogWarning("Spider stopped, can not stop again!");
                 return Task.CompletedTask;
             }
 

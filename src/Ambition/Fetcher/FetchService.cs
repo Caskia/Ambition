@@ -1,9 +1,8 @@
-﻿using Ambition.Infrastructure;
-using Ambition.Pipeline;
+﻿using Ambition.Pipeline;
 using Ambition.Processor;
 using Ambition.Scheduler;
 using Ambition.Timing;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,13 +20,14 @@ namespace Ambition.Fetcher
             (
                 IFetcherProvider fetcherProvider,
                 IFetchResultProcessorProvider fetchResultProcessorProvider,
-                IPipelineProvider pipelineProvider
+                IPipelineProvider pipelineProvider,
+                ILoggerFactory loggerFactory
             )
         {
             _fetcherProvider = fetcherProvider;
             _fetchResultProcessorProvider = fetchResultProcessorProvider;
             _pipelineProvider = pipelineProvider;
-            _logger = new Log4NetLoggerFactory().Create(nameof(FetchService));
+            _logger = loggerFactory.CreateLogger<FetchService>();
         }
 
         public async Task FetchAsync(IRequestTask requestTask, CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ namespace Ambition.Fetcher
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    _logger.Info($"cancel fetch resource!");
+                    _logger.LogInformation($"cancel fetch resource!");
                     return;
                 }
 
@@ -47,15 +47,15 @@ namespace Ambition.Fetcher
             }
             catch (TaskCanceledException ex)
             {
-                _logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
             }
             catch (ObjectDisposedException ex)
             {
-                _logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
             }
             catch (Exception ex)
             {
-                _logger.Error($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
+                _logger.LogError($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
 
                 await NextTryFetchAsync(requestTask, cancellationToken);
             }
@@ -70,25 +70,25 @@ namespace Ambition.Fetcher
 
                 try
                 {
-                    _logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
+                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
                     await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
 
                     requestTask.LastTryTime = requestTask.NextTryTime;
 
-                    _logger.Info($"try to connect to uri[{requestTask.Uri.ToString()}]");
+                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri.ToString()}]");
                     await FetchAsync(requestTask, cancellationToken);
                 }
                 catch (TaskCanceledException ex)
                 {
-                    _logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                    _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    _logger.Info($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                    _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
+                    _logger.LogError($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
                 }
             }
         }

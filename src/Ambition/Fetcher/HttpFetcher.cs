@@ -1,8 +1,7 @@
 ﻿using Ambition.Extensions;
-using Ambition.Infrastructure;
 using Ambition.Scheduler;
 using Ambition.Utils;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -16,9 +15,9 @@ namespace Ambition.Fetcher
     {
         private readonly ILogger _logger;
 
-        public HttpFetcher()
+        public HttpFetcher(ILoggerFactory loggerFactory)
         {
-            _logger = new Log4NetLoggerFactory().Create(nameof(HttpFetcher));
+            _logger = loggerFactory.CreateLogger<HttpFetcher>();
         }
 
         public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
@@ -65,14 +64,14 @@ namespace Ambition.Fetcher
             {
                 httpClient.Dispose();
 
-                _logger.Error($"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!", hre);
+                _logger.LogError($"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!", hre);
                 throw hre;
             }
             catch (Exception ex)
             {
                 httpClient.Dispose();
 
-                _logger.Error($"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!", ex);
+                _logger.LogError($"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!", ex);
                 throw ex;
             }
         }

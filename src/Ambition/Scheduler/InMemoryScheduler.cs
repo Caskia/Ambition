@@ -1,7 +1,6 @@
-﻿using Ambition.Infrastructure;
-using Ambition.Threading;
+﻿using Ambition.Threading;
 using Ambition.Timing;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +13,9 @@ namespace Ambition.Scheduler
         private readonly ILogger _logger;
         private ConcurrentDictionary<string, IRequestTask> tasks = new ConcurrentDictionary<string, IRequestTask>();
 
-        public InMemoryScheduler()
+        public InMemoryScheduler(ILoggerFactory loggerFactory)
         {
-            _logger = new Log4NetLoggerFactory().Create(nameof(InMemoryScheduler));
+            _logger = loggerFactory.CreateLogger<InMemoryScheduler>();
         }
 
         public async Task<IRequestTask> PollAsync()
@@ -25,7 +24,7 @@ namespace Ambition.Scheduler
 
             while (requestTask == null)
             {
-                _logger.Debug("cannot get task wait 1 second to try again.");
+                _logger.LogDebug("cannot get task wait 1 second to try again.");
                 await Task.Delay(1000);
                 requestTask = await GetNextWaitingTask();
             }
@@ -60,7 +59,9 @@ namespace Ambition.Scheduler
                     task.Status = RequestTaskStatus.Active;
                 }
 
-                return task;
+                tasks.TryRemove(task.Identity, out IRequestTask removedTask);
+
+                return removedTask;
             }
         }
 

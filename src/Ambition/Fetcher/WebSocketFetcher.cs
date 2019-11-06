@@ -1,7 +1,6 @@
-﻿using Ambition.Infrastructure;
-using Ambition.Scheduler;
+﻿using Ambition.Scheduler;
 using Ambition.Utils;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -16,9 +15,9 @@ namespace Ambition.Fetcher
     {
         private readonly ILogger _logger;
 
-        public WebSocketFetcher()
+        public WebSocketFetcher(ILoggerFactory loggerFactory)
         {
-            _logger = new Log4NetLoggerFactory().Create(nameof(WebSocketFetcher));
+            _logger = loggerFactory.CreateLogger<WebSocketFetcher>();
         }
 
         public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
@@ -48,7 +47,7 @@ namespace Ambition.Fetcher
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Websocket[{requestTask.Uri}] send command error!", ex);
+                    _logger.LogError($"Websocket[{requestTask.Uri}] send command error!", ex);
                 }
             });
 
@@ -87,7 +86,7 @@ namespace Ambition.Fetcher
             }
             catch (Exception ex)
             {
-                _logger.Error($"receive Websocket[{requestTask.Uri}] data error!", ex);
+                _logger.LogError($"receive Websocket[{requestTask.Uri}] data error!", ex);
 
                 client.Dispose();
                 throw ex;
