@@ -177,7 +177,7 @@ namespace Ambition
             {
                 var request = await Scheduler.PollAsync();
 
-                await Task.Factory.StartNew(async r =>
+                _ = Task.Factory.StartNew(async r =>
                 {
                     var oRequest = r as IRequestTask;
                     await FetchService.FetchAsync(oRequest, cancellationToken);

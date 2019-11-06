@@ -1,5 +1,4 @@
 ﻿using Ambition.Bitcoin.RequestTasks;
-using Ambition;
 using Ambition.Fetcher;
 using Ambition.Pipeline;
 using Ambition.Processor;

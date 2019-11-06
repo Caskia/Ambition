@@ -13,9 +13,9 @@ namespace Ambition.Scheduler
         private readonly ILogger _logger;
         private ConcurrentDictionary<string, IRequestTask> tasks = new ConcurrentDictionary<string, IRequestTask>();
 
-        public InMemoryScheduler(ILoggerFactory loggerFactory)
+        public InMemoryScheduler(ILogger<InMemoryScheduler> logger)
         {
-            _logger = loggerFactory.CreateLogger<InMemoryScheduler>();
+            _logger = logger;
         }
 
         public async Task<IRequestTask> PollAsync()
@@ -54,7 +54,11 @@ namespace Ambition.Scheduler
                        .ThenBy(t => t.NextTryTime)
                        .FirstOrDefault();
 
-                if (task != null)
+                if (task == null)
+                {
+                    return null;
+                }
+                else
                 {
                     task.Status = RequestTaskStatus.Active;
                 }

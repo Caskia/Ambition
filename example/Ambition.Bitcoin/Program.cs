@@ -16,6 +16,14 @@ namespace Ambition.Bitcoin
                 services.AddSpider();
                 services.AddHostedService<HostedService>();
             })
+            //.ConfigureAppConfiguration((hostingContext, config) =>
+            //{
+            //    var env = hostingContext.HostingEnvironment;
+
+            //    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            //        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            //        .AddEnvironmentVariables();
+            //})
             .Build();
 
             host.Services.UseAmbition();
