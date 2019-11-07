@@ -12,15 +12,13 @@ namespace Ambition.Bitcoin
 {
     public class HostedService : IHostedService
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly Spider _spider;
 
         public HostedService(
             IServiceProvider serviceProvider
             )
         {
-            _serviceProvider = serviceProvider;
-            _spider = Spider.Create(_serviceProvider);
+            _spider = Spider.Create(serviceProvider);
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
