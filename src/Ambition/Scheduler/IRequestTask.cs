@@ -1,13 +1,9 @@
-﻿using Ambition.Processor;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Ambition.Scheduler
 {
     public interface IRequestTask
     {
-        IList<IFetchResultProcessor> FetchResultProcessors { get; set; }
-
         string Identity { get; }
 
         DateTime? LastTryTime { get; set; }
@@ -23,8 +19,6 @@ namespace Ambition.Scheduler
         short TryCount { get; set; }
 
         Uri Uri { get; set; }
-
-        IRequestTask AddFetchResultProcessor(IFetchResultProcessor fetchResultProcessor);
 
         DateTime? CalculateNextTryTime();
     }

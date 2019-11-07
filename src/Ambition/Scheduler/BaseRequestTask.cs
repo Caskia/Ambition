@@ -1,10 +1,7 @@
-﻿using Ambition.Timing;
+﻿using Ambition.Extensions;
+using Ambition.Timing;
 using Newtonsoft.Json;
 using System;
-using Ambition.Processor;
-using System.Collections.Generic;
-using Ambition.Extensions;
-using Ambition.Fetcher;
 
 namespace Ambition.Scheduler
 {
@@ -15,8 +12,6 @@ namespace Ambition.Scheduler
         public int DefaultFirstWaitDuration { get; set; } = 30;
 
         public double DefaultWaitFactor { get; set; } = 2.0;
-
-        public IList<IFetchResultProcessor> FetchResultProcessors { get; set; } = new List<IFetchResultProcessor>();
 
         public string Identity { get; }
 
@@ -58,22 +53,6 @@ namespace Ambition.Scheduler
         #endregion Ctor
 
         #region Methods
-
-        public virtual IRequestTask AddDefaultFetchResultProcessor(Action<FetchResult> resultHanler = null)
-        {
-            var defaultFetchResultProcessor = new DefaultFetchResultProcessor();
-            if (resultHanler != null)
-            {
-                defaultFetchResultProcessor.SetResultHandler(resultHanler);
-            }
-            return AddFetchResultProcessor(defaultFetchResultProcessor);
-        }
-
-        public virtual IRequestTask AddFetchResultProcessor(IFetchResultProcessor fetchResultProcessor)
-        {
-            FetchResultProcessors.Add(fetchResultProcessor);
-            return this;
-        }
 
         public virtual DateTime? CalculateNextTryTime()
         {
