@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,10 +12,15 @@ namespace Ambition.Fetcher
 {
     public class HttpFetcher : IFetcher
     {
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
 
-        public HttpFetcher(ILoggerFactory loggerFactory)
+        public HttpFetcher(
+            IHttpClientFactory httpClientFactory,
+            ILoggerFactory loggerFactory
+            )
         {
+            _httpClientFactory = httpClientFactory;
             _logger = loggerFactory.CreateLogger<HttpFetcher>();
         }
 
@@ -27,13 +31,8 @@ namespace Ambition.Fetcher
                 throw new ArgumentException($"{nameof(requestTask)} is not http task");
             }
 
+            var httpClient = _httpClientFactory.CreateClient("default");
             var httpRequestTask = requestTask as HttpRequestTask;
-
-            var httpClientHandler = new HttpClientHandler();
-            httpClientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls;
-            httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-            var httpClient = new HttpClient(httpClientHandler);
-
             HttpRequestMessage httpRequestMessage;
             HttpResponseMessage httpResponse;
             try
@@ -57,20 +56,14 @@ namespace Ambition.Fetcher
 
                     await Task.Delay(httpRequestTask.CycleRequestTimeSpan, cancellationToken);
                 }
-
-                httpClient.Dispose();
             }
             catch (HttpRequestException hre)
             {
-                httpClient.Dispose();
-
                 _logger.LogError($"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!", hre);
                 throw hre;
             }
             catch (Exception ex)
             {
-                httpClient.Dispose();
-
                 _logger.LogError($"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!", ex);
                 throw ex;
             }
