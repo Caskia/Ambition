@@ -24,7 +24,7 @@ namespace Ambition.Fetcher
             _logger = loggerFactory.CreateLogger<HttpFetcher>();
         }
 
-        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
+        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken)
         {
             if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(HttpRequestTask)))
             {
@@ -46,7 +46,7 @@ namespace Ambition.Fetcher
 
                     var content = ReadContent(httpResponse, httpRequestTask);
 
-                    onReceived(requestTask, content);
+                    onReceivedContent(requestTask, content);
 
                     if (!httpRequestTask.IsCycleRequest)
                     {

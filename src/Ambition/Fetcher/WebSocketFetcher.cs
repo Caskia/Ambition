@@ -20,7 +20,7 @@ namespace Ambition.Fetcher
             _logger = loggerFactory.CreateLogger<WebSocketFetcher>();
         }
 
-        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
+        public async Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken)
         {
             if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(WebSocketRequestTask)))
             {
@@ -78,7 +78,7 @@ namespace Ambition.Fetcher
 
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        onReceived(requestTask, serializedMessage);
+                        onReceivedContent(requestTask, serializedMessage);
                     }
                 }
 

@@ -18,7 +18,7 @@ namespace Ambition.Fetcher
             _logger = loggerFactory.CreateLogger<SocketIOFetcher>();
         }
 
-        public Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceived, CancellationToken cancellationToken)
+        public Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken)
         {
             if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(SocketIORequestTask)))
             {
@@ -48,7 +48,7 @@ namespace Ambition.Fetcher
                 {
                     client.On(@event, message =>
                     {
-                        onReceived(requestTask, message.ToString());
+                        onReceivedContent(requestTask, message.ToString());
                     });
                 }
 
