@@ -27,6 +27,8 @@ namespace Ambition.Scheduler
 
         public bool IsCycleRequest { get; set; } = false;
 
+        public virtual string RequestUrl { get; set; }
+
         public string UserAgent { get; set; } = "Hicoin-Spider";
 
         #endregion Fields
@@ -45,6 +47,7 @@ namespace Ambition.Scheduler
                 Status = RequestTaskStatus.Failed;
                 return;
             }
+            RequestUrl = url;
 
             this.HttpMethod = httpMethod;
         }
@@ -53,7 +56,7 @@ namespace Ambition.Scheduler
 
         #region Methods
 
-        public virtual HttpRequestTask AddBody(string body, Encoding encoding = default(Encoding))
+        public virtual HttpRequestTask AddBody(string body, Encoding encoding = default)
         {
             if (body.IsNullOrEmpty())
             {

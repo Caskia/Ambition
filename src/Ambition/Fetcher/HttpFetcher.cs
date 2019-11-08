@@ -76,7 +76,7 @@ namespace Ambition.Fetcher
                 throw new ArgumentNullException(nameof(requestTask));
             }
 
-            var httpRequestMessage = new HttpRequestMessage(requestTask.HttpMethod, requestTask.Uri);
+            var httpRequestMessage = new HttpRequestMessage(requestTask.HttpMethod, requestTask.RequestUrl);
 
             if (!requestTask.UserAgent.IsNullOrEmpty())
             {
