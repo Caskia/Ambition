@@ -3,6 +3,7 @@ using Ambition.Pipeline;
 using Ambition.Processor;
 using Ambition.Scheduler;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Net.Http;
 using System.Security.Authentication;
 
@@ -21,6 +22,7 @@ namespace Ambition.Configurations
                         var httpClientHandler = new HttpClientHandler();
                         httpClientHandler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls;
                         httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                        httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
                         return httpClientHandler;
                     });
             services.AddSingleton<SocketIOFetcher>();
