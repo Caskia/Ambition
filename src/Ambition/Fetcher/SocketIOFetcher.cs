@@ -18,7 +18,7 @@ namespace Ambition.Fetcher
             _logger = loggerFactory.CreateLogger<SocketIOFetcher>();
         }
 
-        public Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken)
+        public virtual Task FetchAsync(IRequestTask requestTask, Action<IRequestTask, string> onReceivedContent, CancellationToken cancellationToken)
         {
             if (!TypeUtils.IsClassAssignableFrom(requestTask.GetType(), typeof(SocketIORequestTask)))
             {
