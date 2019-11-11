@@ -13,7 +13,7 @@ namespace Ambition.Scheduler
 
         public double DefaultWaitFactor { get; set; } = 2.0;
 
-        public string Identity { get; }
+        public virtual string Identity { get; }
 
         public DateTime? LastTryTime { get; set; }
 

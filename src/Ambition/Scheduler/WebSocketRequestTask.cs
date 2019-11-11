@@ -11,7 +11,7 @@ namespace Ambition.Scheduler
 
         public virtual IDictionary<string, dynamic> Commands => new Dictionary<string, dynamic>();
 
-        public new string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
+        public override string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
 
         #endregion Properties
 

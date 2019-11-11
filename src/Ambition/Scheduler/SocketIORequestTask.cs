@@ -13,7 +13,7 @@ namespace Ambition.Scheduler
 
         public virtual ISet<string> Events => new HashSet<string>();
 
-        public new string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
+        public override string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
 
         #endregion Properties
 

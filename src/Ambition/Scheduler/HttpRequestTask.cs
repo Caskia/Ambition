@@ -23,7 +23,7 @@ namespace Ambition.Scheduler
 
         public HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
 
-        public new string Identity => Encrypt.Md5Encrypt($"{HttpMethod},{Uri},{Body}");
+        public override string Identity => Encrypt.Md5Encrypt($"{HttpMethod},{Uri},{Body}");
 
         public bool IsCycleRequest { get; set; } = false;
 
