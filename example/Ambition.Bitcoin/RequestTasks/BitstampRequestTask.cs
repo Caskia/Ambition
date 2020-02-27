@@ -1,4 +1,5 @@
 ﻿using Ambition.Scheduler;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Ambition.Bitcoin.RequestTasks
@@ -9,9 +10,9 @@ namespace Ambition.Bitcoin.RequestTasks
         {
         }
 
-        public override IDictionary<string, dynamic> Commands => new Dictionary<string, dynamic>()
+        public override IDictionary<string, string> Commands => new Dictionary<string, string>()
         {
-            { "Bitstamp-subscribe-trades", new { @event = "pusher:subscribe", data = new { channel = "live_trades" } } }
+            { "Bitstamp-subscribe-trades", JsonConvert.SerializeObject(new { @event = "pusher:subscribe", data = new { channel = "live_trades" } })}
         };
     }
 }

@@ -9,7 +9,11 @@ namespace Ambition.Scheduler
     {
         #region Properties
 
-        public virtual IDictionary<string, dynamic> Commands => new Dictionary<string, dynamic>();
+        public int HeartBeatInterval = 5;
+
+        public virtual IDictionary<string, string> Commands => new Dictionary<string, string>();
+
+        public virtual IDictionary<string, string> HeartBeatCommands => new Dictionary<string, string>();
 
         public override string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
 
@@ -17,12 +21,18 @@ namespace Ambition.Scheduler
 
         #region Ctor
 
-        public WebSocketRequestTask(string url) : this(url, null)
+        public WebSocketRequestTask(string url)
+            : this(url, null)
         {
         }
 
-        public WebSocketRequestTask(string url, IDictionary<string, dynamic> commands)
-            : base(url)
+        public WebSocketRequestTask(string url, IDictionary<string, string> commands)
+            : this(url, commands, null)
+        {
+        }
+
+        public WebSocketRequestTask(string url, IDictionary<string, string> commands, IDictionary<string, string> heartBeatCommands)
+           : base(url)
         {
             if (Uri.Scheme != "ws" && Uri.Scheme != "wss")
             {
@@ -37,17 +47,34 @@ namespace Ambition.Scheduler
                     AddCommand(command.Key, command.Value);
                 }
             }
+
+            if (heartBeatCommands != null)
+            {
+                foreach (var command in heartBeatCommands)
+                {
+                    AddHeartBeatCommand(command.Key, command.Value);
+                }
+            }
         }
 
         #endregion Ctor
 
         #region Public Methods
 
-        public virtual WebSocketRequestTask AddCommand(string commandName, dynamic command)
+        public virtual WebSocketRequestTask AddCommand(string commandName, string command)
         {
             if (!Commands.ContainsKey(commandName))
             {
                 Commands.Add(commandName, command);
+            }
+            return this;
+        }
+
+        public virtual WebSocketRequestTask AddHeartBeatCommand(string commandName, string command)
+        {
+            if (!HeartBeatCommands.ContainsKey(commandName))
+            {
+                HeartBeatCommands.Add(commandName, command);
             }
             return this;
         }

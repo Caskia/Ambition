@@ -1,4 +1,5 @@
-﻿using Ambition.Bitcoin.RequestTasks;
+﻿using Ambition.Bitcoin.Processors;
+using Ambition.Bitcoin.RequestTasks;
 using Ambition.Fetcher;
 using Ambition.Pipeline;
 using Ambition.Processor;
@@ -65,6 +66,16 @@ namespace Ambition.Bitcoin
                 typeof(FilePipeline),
                 typeof(ConsolePipeline)
             })
+            .AddOrUpdateFetcher<BtcToolsRequestTask>(typeof(WebSocketFetcher))
+            .AddOrUpdateFetchResultProcessors<BtcToolsRequestTask>(new List<Type>()
+            {
+                typeof(BtcToolsFetchResultProcessor)
+            })
+            .AddOrUpdatePipelines<BtcToolsRequestTask>(new List<Type>()
+            {
+                typeof(FilePipeline),
+                typeof(ConsolePipeline)
+            })
             //socket io
             .AddOrUpdateFetcher<CryptoCompareRequestTask>(typeof(SocketIOFetcher))
             .AddOrUpdateFetchResultProcessors<CryptoCompareRequestTask>(new List<Type>()
@@ -92,6 +103,7 @@ namespace Ambition.Bitcoin
             await _spider.AddTaskAsync(new BitfinexRequestTask());
             await _spider.AddTaskAsync(new GeminiRequestTask());
             await _spider.AddTaskAsync(new BitstampRequestTask());
+            await _spider.AddTaskAsync(new BtcToolsRequestTask());
             await _spider.AddTaskAsync(new CryptoCompareRequestTask());
             await _spider.AddTaskAsync(new GDaxHttpRequestTask());
 

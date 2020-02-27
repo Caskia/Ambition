@@ -47,15 +47,15 @@ namespace Ambition.Fetcher
             }
             catch (TaskCanceledException ex)
             {
-                _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
             }
             catch (ObjectDisposedException ex)
             {
-                _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
+                _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
 
                 await NextTryFetchAsync(requestTask, cancellationToken);
             }
@@ -70,25 +70,25 @@ namespace Ambition.Fetcher
 
                 try
                 {
-                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri.ToString()}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
+                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
                     await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
 
                     requestTask.LastTryTime = requestTask.NextTryTime;
 
-                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri.ToString()}]");
+                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri}]");
                     await FetchAsync(requestTask, cancellationToken);
                 }
                 catch (TaskCanceledException ex)
                 {
-                    _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                    _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    _logger.LogInformation($"uri[{requestTask.Uri.ToString()}] canceled!", ex);
+                    _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"uri[{requestTask.Uri.ToString()}] connect error!", ex);
+                    _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
                 }
             }
         }

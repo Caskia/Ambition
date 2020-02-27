@@ -1,7 +1,6 @@
 ﻿using Ambition.Scheduler;
 using Ambition.Utils;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net.WebSockets;
@@ -40,8 +39,7 @@ namespace Ambition.Fetcher
                     await Task.Delay(1000, cancellationToken);
                     foreach (var command in webSocketRequestTask.Commands)
                     {
-                        var commandJson = JsonConvert.SerializeObject(command.Value);
-                        var commandBytes = Encoding.UTF8.GetBytes(commandJson);
+                        var commandBytes = Encoding.UTF8.GetBytes(command.Value);
                         await client.SendAsync(new ArraySegment<byte>(commandBytes), WebSocketMessageType.Text, true, cancellationToken);
                     }
                 }
@@ -50,6 +48,31 @@ namespace Ambition.Fetcher
                     _logger.LogError($"Websocket[{requestTask.Uri}] send command error!", ex);
                 }
             });
+
+            //heartbeat
+            if (webSocketRequestTask.HeartBeatCommands != null && webSocketRequestTask.HeartBeatCommands.Count > 0)
+            {
+                await Task.Factory.StartNew(async () =>
+                {
+                    while (client.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            foreach (var command in webSocketRequestTask.HeartBeatCommands)
+                            {
+                                var commandBytes = Encoding.UTF8.GetBytes(command.Value);
+                                await client.SendAsync(new ArraySegment<byte>(commandBytes), WebSocketMessageType.Text, true, cancellationToken);
+                            }
+
+                            await Task.Delay(TimeSpan.FromSeconds(webSocketRequestTask.HeartBeatInterval));
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Websocket[{requestTask.Uri}] send heartbeat error!", ex);
+                        }
+                    }
+                });
+            }
 
             //receive message
             try
