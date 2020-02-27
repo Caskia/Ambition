@@ -1,5 +1,4 @@
 ﻿using Ambition.Bitcoin.Configurations;
-using Ambition.Bitcoin.Processors;
 using Ambition.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +14,6 @@ namespace Ambition.Bitcoin
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSpider();
-                services.AddSingleton<BtcToolsFetchResultProcessor>();
                 services.AddHostedService<HostedService>();
             })
             //.ConfigureAppConfiguration((hostingContext, config) =>
