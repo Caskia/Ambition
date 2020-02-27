@@ -12,8 +12,13 @@ namespace Ambition.Bitcoin.RequestTasks
 
         public override IDictionary<string, string> Commands => new Dictionary<string, string>()
         {
-            { "HandShake", JsonConvert.SerializeObject(new { @event = "#handshake", data = new { authToken = "" },  cid = 1 }) },
-            { "SubscribeTrades", JsonConvert.SerializeObject(new { @event = "#subscribe", data = new { channel = "bitmex_xbtusd_trades" },  cid = 2 }) }
+            { "HandShake", JsonConvert.SerializeObject(new { @event = "#handshake", data = new { authToken = "" }, cid = 1 }) },
+            { "SubscribeTrades", JsonConvert.SerializeObject(new { @event = "#subscribe", data = new { channel = "bitmex_xbtusd_trades" }, cid = 2 }) }
+        };
+
+        public override IDictionary<string, string> HeartBeatCommands => new Dictionary<string, string>()
+        {
+            { "HeartBeat", "#2" }
         };
     }
 }
