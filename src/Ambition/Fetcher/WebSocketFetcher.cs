@@ -45,7 +45,7 @@ namespace Ambition.Fetcher
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Websocket[{requestTask.Uri}] send command error!", ex);
+                    _logger.LogError($"websocket[{requestTask.Uri}] send command error!", ex);
                 }
             });
 
@@ -68,7 +68,7 @@ namespace Ambition.Fetcher
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Websocket[{requestTask.Uri}] send heartbeat error!", ex);
+                            _logger.LogError($"websocket[{requestTask.Uri}] send heartbeat error!", ex);
                         }
                     }
                 });
@@ -105,11 +105,11 @@ namespace Ambition.Fetcher
                     }
                 }
 
-                client.Dispose();
+                throw new Exception($"websocket disconnected caused by unknown reason.");
             }
             catch (Exception ex)
             {
-                _logger.LogError($"receive Websocket[{requestTask.Uri}] data error!", ex);
+                _logger.LogError($"receive websocket[{requestTask.Uri}] data error!", ex);
 
                 client.Dispose();
                 throw ex;

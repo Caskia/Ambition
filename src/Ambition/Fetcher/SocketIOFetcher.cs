@@ -71,7 +71,7 @@ namespace Ambition.Fetcher
                     Thread.Sleep(1000);
                 }
 
-                throw new Exception("socket-io disconnect!");
+                throw new Exception("socket-io disconnected caused by unknown reason.");
             }
             catch (Exception ex)
             {

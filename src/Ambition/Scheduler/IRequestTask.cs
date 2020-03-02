@@ -20,6 +20,6 @@ namespace Ambition.Scheduler
 
         Uri Uri { get; set; }
 
-        DateTime? CalculateNextTryTime();
+        DateTime CalculateNextTryTime();
     }
 }

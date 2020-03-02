@@ -1,5 +1,6 @@
 ﻿using Ambition.Bitcoin.Configurations;
 using Ambition.Configurations;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
@@ -10,20 +11,20 @@ namespace Ambition.Bitcoin
     {
         public static async Task Main(string[] args)
         {
-            var host = Host.CreateDefaultBuilder(args)
+            var host = new HostBuilder()
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSpider();
                 services.AddHostedService<HostedService>();
             })
-            //.ConfigureAppConfiguration((hostingContext, config) =>
-            //{
-            //    var env = hostingContext.HostingEnvironment;
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                var env = hostingContext.HostingEnvironment;
 
-            //    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            //        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-            //        .AddEnvironmentVariables();
-            //})
+                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                    .AddEnvironmentVariables();
+            })
             .Build();
 
             host.Services.UseAmbition();

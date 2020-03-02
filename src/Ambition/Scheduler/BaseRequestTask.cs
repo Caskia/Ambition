@@ -9,7 +9,7 @@ namespace Ambition.Scheduler
     {
         #region Properties
 
-        public int DefaultFirstWaitDuration { get; set; } = 30;
+        public int DefaultFirstWaitDuration { get; set; } = 5;
 
         public double DefaultWaitFactor { get; set; } = 2.0;
 
@@ -54,7 +54,7 @@ namespace Ambition.Scheduler
 
         #region Methods
 
-        public virtual DateTime? CalculateNextTryTime()
+        public virtual DateTime CalculateNextTryTime()
         {
             var nextWaitDuration = DefaultFirstWaitDuration * (Math.Pow(DefaultWaitFactor, TryCount - 1));
             var nextTryDate = LastTryTime.HasValue

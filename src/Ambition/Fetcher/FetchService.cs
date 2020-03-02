@@ -32,69 +32,35 @@ namespace Ambition.Fetcher
 
         public async Task FetchAsync(IRequestTask requestTask, CancellationToken cancellationToken)
         {
-            requestTask.TryCount += 1;
-            requestTask.LastTryTime = Clock.Now;
-
-            try
+            while (true)
             {
-                if (cancellationToken.IsCancellationRequested)
+                var result = await TryFetchAsync(requestTask, cancellationToken);
+                if (result)
                 {
-                    _logger.LogInformation($"cancel fetch resource!");
-                    return;
+                    break;
                 }
 
-                await _fetcherProvider.GetFetcher(requestTask.GetType()).FetchAsync(requestTask, OnReceivedContent, cancellationToken);
-            }
-            catch (TaskCanceledException ex)
-            {
-                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
-            }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
+                requestTask.LastTryTime = Clock.Now;
+                requestTask.TryCount += 1;
+                requestTask.NextTryTime = requestTask.CalculateNextTryTime();
+                _logger.LogInformation($"try to connect to uri[{requestTask.Uri}] at {requestTask.NextTryTime.ToString("yyyyMMddHHmmss")}");
 
-                await NextTryFetchAsync(requestTask, cancellationToken);
-            }
-        }
-
-        protected virtual async Task NextTryFetchAsync(IRequestTask requestTask, CancellationToken cancellationToken)
-        {
-            var nextTryTime = requestTask.CalculateNextTryTime();
-            if (nextTryTime.HasValue)
-            {
-                requestTask.NextTryTime = nextTryTime.Value;
-
-                try
+                var now = Clock.Now;
+                var delayTimeSpan = new TimeSpan();
+                if (requestTask.NextTryTime > now)
                 {
-                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri}] at {nextTryTime.Value.ToString("yyyyMMddHHmmss")}");
-                    await Task.Delay((int)(requestTask.NextTryTime - Clock.Now).TotalMilliseconds, cancellationToken);
+                    delayTimeSpan = requestTask.NextTryTime - now;
+                }
+                await Task.Delay(delayTimeSpan, cancellationToken);
 
-                    requestTask.LastTryTime = requestTask.NextTryTime;
-
-                    _logger.LogInformation($"try to connect to uri[{requestTask.Uri}]");
-                    await FetchAsync(requestTask, cancellationToken);
-                }
-                catch (TaskCanceledException ex)
-                {
-                    _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
-                }
-                catch (ObjectDisposedException ex)
-                {
-                    _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
-                }
+                _logger.LogInformation($"try to connect to uri[{requestTask.Uri}]");
             }
         }
 
         protected virtual void OnReceivedContent(IRequestTask requestTask, string content)
         {
+            requestTask.TryCount = 0;
+
             var fetchResult = new FetchResult(content, requestTask);
             var requestTaskType = requestTask.GetType();
 
@@ -112,6 +78,36 @@ namespace Ambition.Fetcher
                     await pipeline.HandleAsync(fetchResult);
                 });
             }
+        }
+
+        protected async Task<bool> TryFetchAsync(IRequestTask requestTask, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    _logger.LogInformation($"cancel fetch resource!");
+                    return true;
+                }
+
+                await _fetcherProvider.GetFetcher(requestTask.GetType()).FetchAsync(requestTask, OnReceivedContent, cancellationToken);
+            }
+            catch (TaskCanceledException ex)
+            {
+                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                _logger.LogInformation($"uri[{requestTask.Uri}] canceled!", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
+
+                return false;
+            }
+
+            return true;
         }
     }
 }
