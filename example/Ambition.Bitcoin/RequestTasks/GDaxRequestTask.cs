@@ -6,13 +6,15 @@ namespace Ambition.Bitcoin.RequestTasks
 {
     public class GDaxRequestTask : WebSocketRequestTask
     {
-        public GDaxRequestTask() : base("wss://ws-feed.gdax.com")
+        public GDaxRequestTask() : base
+            (
+                "wss://ws-feed.gdax.com",
+                new Dictionary<string, string>()
+                {
+                    { "GDAX-subscribe-ticker", JsonConvert.SerializeObject(new { type = "subscribe", channels = new string[] { "ticker" }, product_ids = new string[] { "BTC-USD" } }) }
+                }
+            )
         {
         }
-
-        public override IDictionary<string, string> Commands => new Dictionary<string, string>()
-        {
-            { "GDAX-subscribe-ticker", JsonConvert.SerializeObject(new { type = "subscribe", channels = new string[] { "ticker" }, product_ids = new string[] { "BTC-USD" } }) }
-        };
     }
 }

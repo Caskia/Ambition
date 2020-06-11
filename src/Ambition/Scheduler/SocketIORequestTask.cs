@@ -9,9 +9,9 @@ namespace Ambition.Scheduler
     {
         #region Properties
 
-        public virtual IDictionary<string, dynamic> Commands => new Dictionary<string, dynamic>();
+        public IDictionary<string, dynamic> Commands { get; private set; } = new Dictionary<string, dynamic>();
 
-        public virtual ISet<string> Events => new HashSet<string>();
+        public ISet<string> Events { get; private set; } = new HashSet<string>();
 
         public override string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
 

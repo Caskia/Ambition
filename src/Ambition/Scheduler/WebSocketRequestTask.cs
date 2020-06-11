@@ -11,9 +11,9 @@ namespace Ambition.Scheduler
 
         public int HeartBeatInterval = 5;
 
-        public virtual IDictionary<string, string> Commands => new Dictionary<string, string>();
+        public IDictionary<string, string> Commands { get; private set; } = new Dictionary<string, string>();
 
-        public virtual IDictionary<string, string> HeartBeatCommands => new Dictionary<string, string>();
+        public IDictionary<string, string> HeartBeatCommands { get; private set; } = new Dictionary<string, string>();
 
         public override string Identity => Encrypt.Md5Encrypt($"{Uri},{string.Join(",", Commands.Select(command => command.Key))}");
 

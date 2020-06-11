@@ -13,23 +13,23 @@ namespace Ambition.Scheduler
     {
         #region Fields
 
-        public string Body { get; set; }
+        public string Body { get; private set; }
 
-        public TimeSpan CycleRequestTimeSpan { get; set; } = TimeSpan.Zero;
+        public TimeSpan CycleRequestTimeSpan { get; private set; } = TimeSpan.Zero;
 
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding { get; private set; } = Encoding.UTF8;
 
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> Headers { get; private set; } = new Dictionary<string, string>();
 
-        public HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
+        public HttpMethod HttpMethod { get; private set; } = HttpMethod.Get;
 
         public override string Identity => Encrypt.Md5Encrypt($"{HttpMethod},{Uri},{Body}");
 
-        public bool IsCycleRequest { get; set; } = false;
+        public bool IsCycleRequest { get; private set; } = false;
 
-        public virtual string RequestUrl { get; set; }
+        public virtual string RequestUrl { get; private set; }
 
-        public string UserAgent { get; set; } = "Hicoin-Spider";
+        public string UserAgent { get; private set; } = "Hicoin-Spider";
 
         #endregion Fields
 

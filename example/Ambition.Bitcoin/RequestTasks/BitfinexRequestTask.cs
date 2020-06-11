@@ -6,13 +6,16 @@ namespace Ambition.Bitcoin.RequestTasks
 {
     public class BitfinexRequestTask : WebSocketRequestTask
     {
-        public BitfinexRequestTask() : base("wss://api.bitfinex.com/ws")
+        public BitfinexRequestTask() :
+            base
+            (
+                "wss://api.bitfinex.com/ws",
+                new Dictionary<string, string>()
+                {
+                    { "Bitfinex-subscribe-ticker", JsonConvert.SerializeObject(new {  @event = "subscribe", channel = "Ticker", symbol = "BTCUSD" })}
+                }
+            )
         {
         }
-
-        public override IDictionary<string, string> Commands => new Dictionary<string, string>()
-        {
-            { "Bitfinex-subscribe-ticker", JsonConvert.SerializeObject(new {  @event = "subscribe", channel = "Ticker", symbol = "BTCUSD" })}
-        };
     }
 }
