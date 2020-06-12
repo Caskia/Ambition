@@ -17,6 +17,7 @@ namespace Ambition
 
         private readonly ILogger _logger;
         private readonly IServiceProvider _serviceProvider;
+        private CancellationTokenSource _cancellationTokenSource;
         private IScheduler _scheduler;
         public string Identity { get; set; }
 
@@ -60,6 +61,7 @@ namespace Ambition
         {
             Identity = identity;
             _serviceProvider = serviceProvider;
+            _cancellationTokenSource = new CancellationTokenSource();
 
             _logger = _serviceProvider.GetService<ILoggerFactory>().CreateLogger<Spider>();
         }
@@ -172,6 +174,14 @@ namespace Ambition
                 return;
             }
             Status = SpiderStatus.Running;
+            await Task.Factory.StartNew(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Yield();
+                }
+                _cancellationTokenSource.Cancel();
+            });
 
             while (Status == SpiderStatus.Running)
             {
@@ -180,7 +190,7 @@ namespace Ambition
                 _ = Task.Factory.StartNew(async r =>
                 {
                     var oRequest = r as IRequestTask;
-                    await FetchService.FetchAsync(oRequest, cancellationToken);
+                    await FetchService.FetchAsync(oRequest, _cancellationTokenSource.Token);
                 }, request);
             }
         }
@@ -194,6 +204,7 @@ namespace Ambition
             }
 
             Status = SpiderStatus.Stopped;
+            _cancellationTokenSource.Cancel();
 
             Thread.Sleep(2000);
 
