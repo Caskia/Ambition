@@ -100,12 +100,12 @@ namespace Ambition.Bitcoin
             });
 
             await _spider.AddTaskAsync(new GDaxRequestTask());
-            //await _spider.AddTaskAsync(new BitfinexRequestTask());
-            //await _spider.AddTaskAsync(new GeminiRequestTask());
-            //await _spider.AddTaskAsync(new BitstampRequestTask());
-            //await _spider.AddTaskAsync(new BtcToolsRequestTask());
-            //await _spider.AddTaskAsync(new CryptoCompareRequestTask());
-            //await _spider.AddTaskAsync(new GDaxHttpRequestTask());
+            await _spider.AddTaskAsync(new BitfinexRequestTask());
+            await _spider.AddTaskAsync(new GeminiRequestTask());
+            await _spider.AddTaskAsync(new BitstampRequestTask());
+            await _spider.AddTaskAsync(new BtcToolsRequestTask());
+            await _spider.AddTaskAsync(new CryptoCompareRequestTask());
+            await _spider.AddTaskAsync(new GDaxHttpRequestTask());
 
             await _spider.StartAsync(cancellationToken);
         }

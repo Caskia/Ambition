@@ -13,7 +13,7 @@ namespace Ambition.Configurations
     {
         public static IServiceCollection AddAmbition(this IServiceCollection services)
         {
-            services.AddSingleton<InMemoryScheduler>();
+            services.AddTransient<InMemoryScheduler>();
             services.AddSingleton<IFetchService, FetchService>();
             services.AddSingleton<HttpFetcher>();
             services.AddHttpClient("default", c => { })
