@@ -178,7 +178,7 @@ namespace Ambition
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await Task.Yield();
+                    await Task.Delay(TimeSpan.FromMilliseconds(10));
                 }
                 _cancellationTokenSource.Cancel();
             });
