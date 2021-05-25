@@ -109,7 +109,7 @@ namespace Ambition.Fetcher
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"receive websocket[{requestTask.Uri}] data error!");
+                _logger.LogError(ex, $"receive websocket[{requestTask.Uri}] data error, close description[{client.CloseStatusDescription}].");
 
                 client.Dispose();
                 throw;
