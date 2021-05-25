@@ -102,7 +102,7 @@ namespace Ambition.Fetcher
             }
             catch (Exception ex)
             {
-                _logger.LogError($"uri[{requestTask.Uri}] connect error!", ex);
+                _logger.LogError(ex, $"uri[{requestTask.Uri}] connect error!");
 
                 return false;
             }

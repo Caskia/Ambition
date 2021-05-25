@@ -75,7 +75,7 @@ namespace Ambition.Fetcher
             }
             catch (Exception ex)
             {
-                _logger.LogError($"receive socket-io[{requestTask.Uri}] data error!", ex);
+                _logger.LogError(ex, $"receive socket-io[{requestTask.Uri}] data error!");
 
                 client.Disconnect();
                 client.Close();

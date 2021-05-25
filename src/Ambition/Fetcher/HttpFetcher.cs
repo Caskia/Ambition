@@ -59,12 +59,12 @@ namespace Ambition.Fetcher
             }
             catch (HttpRequestException hre)
             {
-                _logger.LogError($"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!", hre);
+                _logger.LogError(hre, $"HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}]  response status error!");
                 throw hre;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!", ex);
+                _logger.LogError(ex, $"receive HttpMethod[{httpRequestTask.HttpMethod}] Uri[{requestTask.Uri}] data error!");
                 throw ex;
             }
         }
