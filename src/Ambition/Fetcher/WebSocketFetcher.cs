@@ -105,14 +105,14 @@ namespace Ambition.Fetcher
                     }
                 }
 
-                throw new Exception($"websocket disconnected caused by unknown reason.");
+                throw new Exception($"websocket disconnected caused by unknown reason, close description[{client.CloseStatusDescription}].");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"receive websocket[{requestTask.Uri}] data error!");
 
                 client.Dispose();
-                throw ex;
+                throw;
             }
         }
     }
